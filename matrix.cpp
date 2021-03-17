@@ -112,12 +112,8 @@ public:
     //-----Standart operations-----
     //-----Getters-----
     bool is_exist()
-    {
-        if (initialization == NULL)
-            return NULL;
-        else
-            return 1;
-    }
+    {return initialization;}
+       
     float** get_matrix()
     {
         float** Copy = new float* [I];
