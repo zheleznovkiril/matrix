@@ -32,13 +32,12 @@ public:
             std::cout << "Enter numbers:" << std::endl;
 
             initialization = 1;
-            Matrix = new float [I*J-1];
-
+            Matrix = new float[I * J - 1];
             for (int i = 0; i < I; ++i)
                 for (int j = 0; j < J; ++j)
                 {
                     std::cout << "Matrix[" << i + 1 << "][" << j + 1 << "] = ";
-                    std::cin >> Matrix[i*J+j];
+                    std::cin >> Matrix[i * J + j];
                     std::cout << std::endl;
                 }
         }
@@ -67,7 +66,7 @@ public:
             {
                 std::cout << "|\t";
                 for (int j = 0; j < J; ++j)
-                    std::cout << Matrix[i*J+j] << '\t';
+                    std::cout << Matrix[i * J + j] << '\t';
                 std::cout << "|\n" << std::endl;
             }
             std::cout << "Number of lines: " << I << '\n' << "Number of columns: " << J << std::endl;
@@ -81,10 +80,9 @@ public:
         this->J = other.J;
         this->initialization = 1;
 
-        this->Matrix = new float [I*J];
-        for (int i = 0; i < I; ++i)
-            for (int j = 0; j < J; ++j)
-                this->Matrix[i*J+j] = other.Matrix[i*J+j];
+        this->Matrix = new float[I * J];
+        for (int i = 0; i < I * J; ++i)
+            this->Matrix[i] = other.Matrix[i];
         return *this;
     }
 
@@ -102,24 +100,49 @@ public:
                 {
                     plus.I = this->I; plus.J = this->J; plus.initialization = this->initialization;
                     plus.Matrix = new float[I * J];
-                    for (int i = 0; i < I; ++i)
-                        for (int j = 0; j < J; ++j)
-                            plus.Matrix[i * J + j] = this->Matrix[i * J + j] + other.Matrix[i * J + j];
+                    for (int i = 0; i < I * J; ++i)
+                        plus.Matrix[i] = this->Matrix[i] + other.Matrix[i];
                 }
                 else std::cout << "Error: different values of columns!" << std::endl;
             else std::cout << "Error: different values of lines!" << std::endl;
         }
         return plus;
     }
+
+    matrix operator*(matrix& other)
+    {
+        matrix temp;
+
+        if (other.initialization == 0 || this->initialization == 0)
+            std::cout << "Error: one of matrix doesn't exist";
+        else if (this->initialization == 1 && other.initialization == 1)
+        {
+            if (this->J == other.I)
+            {
+                temp.I = this->I; temp.J = other.J; temp.initialization = this->initialization;
+                temp.Matrix = new float[temp.I * temp.J];
+                for (int i = 0; i < temp.I; ++i)
+                    for (int j = 0; j < temp.J; ++j)
+                    {
+                        temp.Matrix[i * J + j] = 0;
+                        for (int k = 0; k < temp.J; ++k)
+                            temp.Matrix[i * J + j] += this->Matrix[i * (this->J) + k] * other.Matrix[k * other.J + j];
+                    }
+            }
+            else std::cout << "Error: matrices aren't consistent!" << std::endl;
+        }
+
+        return temp;
+    }
     //-----Standart operations-----
     //-----Getters-----
- 
+
     float* get_matrix()
     {
         float* Copy = new float[I * J - 1];
         for (int i = 0; i < I; ++i)
             for (int j = 0; j < J; ++j)
-                Copy[i*J+j] = Matrix[i*J+j];
+                Copy[i * J + j] = Matrix[i * J + j];
         return Copy;
     }
     float get_N_elem(int i, int j) { return Matrix[(i - 1) * J + j - 1]; }
@@ -138,11 +161,11 @@ public:
         else
         {
             I = I0; J = J0; initialization = 1;
-            Matrix = new float [I*J-1];
+            Matrix = new float[I * J - 1];
 
             for (int i = 0; i < I; ++i)
                 for (int j = 0; j < J; ++j)
-                    Matrix[i*J+j] = rand();
+                    Matrix[i * J + j] = rand();
         }
     }
 
@@ -162,20 +185,20 @@ public:
     matrix(float* MatrixForCopy, int I0, int J0)
     {
         I = I0; J = J0; initialization = 1;
-        Matrix = new float [I*J-1];
+        Matrix = new float[I * J - 1];
 
         for (int i = 0; i < I; ++i)
             for (int j = 0; j < J; ++j)
-                Matrix[i*J+j] = MatrixForCopy[i*J+j];
+                Matrix[i * J + j] = MatrixForCopy[i * J + j];
     }
 
-    ~matrix() { deletem(); }
+    ~matrix() { }//deletem();
     //-----Constructors and destructor-----
 };
 
 
 
-int main()// блять ошибка почему то
+int main()// почини деструктор
 {
     srand(time(0));
     std::string a;
@@ -184,18 +207,17 @@ int main()// блять ошибка почему то
     matrix test3;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.absoluterandom();
+    test.create();
     test.printinfo();
 
-    test2 = test;
+    test2.create();
     test2.printinfo();
 
-    test3 = test2 + test;
+    test3 = test * test2;
     test3.printinfo();
-
-    std::cout << test2.get_N_elem(3, 3);
 
     //test plus;
     std::cout << "Hello World!\n";
     return 0;
 }
+
