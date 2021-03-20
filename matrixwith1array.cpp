@@ -140,13 +140,8 @@ public:
                 temp.zero(this->I, other.J);
                 for (int i = 0; i < temp.I; ++i)
                     for (int j = 0; j < temp.J; ++j)
-                    {
                         for (int k = 0; k < this->J; ++k)
                             temp.Matrix[i * temp.J + j] += this->Matrix[i * (this->J) + k] * other.Matrix[k * other.J + j];
-
-                        temp.Matrix[i * J + j] = temp.Matrix[i * J + j];
-                        std::cout << temp.Matrix[i * J + j] << std::endl;
-                    }
             }
             else std::cout << "Error: matrices aren't consistent!" << std::endl;
         }
@@ -225,17 +220,16 @@ int main()// почини деструктор
     matrix test3;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.random(6,2);
+    test.random(2,1);
     test.printinfo();
 
-    test2.random(2,4);
+    test2.random(1,1);
     test2.printinfo();
 
-    test3 = test2 * test;
+    test3 = test * test2;
     test3.printinfo();
 
     //test plus;
     std::cout << "Hello World!\n";
     return 0;
 }
-
