@@ -73,22 +73,45 @@ public:
         }
     }
 
+    void identity()
+    {
+        if (initialization == NULL)
+            std::cout << "Error: Matrix doesn't exist" << std::endl;
+        else if (I != J)
+            std::cout << "Error: Not square matrix can't be tranform" << std::endl;
+        else
+        {
+            zero();
+            for (int i = 0; i < I * J; i += (J + 1))
+                this->Matrix[i] = 1;
+        }
+    }
+
+    void identity(int I)
+    {
+        if (initialization != NULL)
+            deletem();
+        this->I = I; this->J = I; this->initialization = 1;
+        this->Matrix = new float[I * I];
+        (*this).identity();
+    }
+
     void zero()
     {
-        for (int i = 0; i < I * J; ++i)
-            Matrix[i] = 0;
+        if (initialization == NULL)
+            std::cout << "Error: Matrix doesn't exist" << std::endl;
+        else
+            for (int i = 0; i < I * J; ++i)
+                Matrix[i] = 0;
     }
-    
+
     void zero(int I0, int J0)
     {
         if (initialization != NULL)
-            std::cout << "Error: Matrix exist already"<<std::endl;
-        else
-        {
-            this->I = I0; this->J = J0; this->initialization = 1;
-            this->Matrix = new float[I * J];
-            zero();
-        }
+            deletem();
+        this->I = I0; this->J = J0; this->initialization = 1;
+        this->Matrix = new float[I * J];
+        zero();
     }
     //-----Standart operations-----
     matrix& operator=(const matrix& other)
@@ -147,6 +170,49 @@ public:
         }
         return temp;
     }
+
+    matrix& operator*=(matrix& other)
+    {
+        if (other.initialization == 0 || this->initialization == 0)
+        {
+            std::cout << "Error: one of matrix doesn't exist";
+            return *this;
+        }
+        else
+        {
+            if (this->J == other.I)
+                (*this) = (*this) * other;
+            else
+                std::cout << "Error: matrices aren't consistent!" << std::endl;
+            return *this;
+        }
+    }
+
+    /*void power(int pow) исправь потом
+    {
+        if (pow >= 1)
+        {
+            matrix temp = (*this);
+            if (this->I != this->J)
+            {
+                std::cout << "Error: Matrix isn't square" << std::endl;
+            }
+            else if (this->initialization == NULL)
+            {
+                std::cout << "Error: Matrix doesn't exist" << std::endl;
+            }
+            else
+            {
+                for (int i = 1; i < pow; ++i)
+                    temp *= (*this);
+                (*this) = temp;
+            }
+        }
+        else
+        {
+            std::cout << "Error: The weird value for power" << std::endl;
+        }
+    }*/
     //-----Standart operations-----
     //-----Getters-----
 
@@ -218,16 +284,17 @@ int main()// почини деструктор
     matrix test;
     matrix test2;
     matrix test3;
+    matrix test4;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.random(2,1);
+    test.random(1, 4);
     test.printinfo();
-
-    test2.random(1,1);
+    test2.identity(4);
     test2.printinfo();
 
-    test3 = test * test2;
-    test3.printinfo();
+    test *= test2;
+    test.printinfo();
+   
 
     //test plus;
     std::cout << "Hello World!\n";
