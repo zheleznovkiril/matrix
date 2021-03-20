@@ -72,6 +72,24 @@ public:
             std::cout << "Number of lines: " << I << '\n' << "Number of columns: " << J << std::endl;
         }
     }
+
+    void zero()
+    {
+        for (int i = 0; i < I * J; ++i)
+            Matrix[i] = 0;
+    }
+    
+    void zero(int I0, int J0)
+    {
+        if (initialization != NULL)
+            std::cout << "Error: Matrix exist already"<<std::endl;
+        else
+        {
+            this->I = I0; this->J = J0; this->initialization = 1;
+            this->Matrix = new float[I * J];
+            zero();
+        }
+    }
     //-----Standart operations-----
     matrix& operator=(const matrix& other)
     {
@@ -119,19 +137,19 @@ public:
         {
             if (this->J == other.I)
             {
-                temp.I = this->I; temp.J = other.J; temp.initialization = this->initialization;
-                temp.Matrix = new float[temp.I * temp.J];
+                temp.zero(this->I, other.J);
                 for (int i = 0; i < temp.I; ++i)
                     for (int j = 0; j < temp.J; ++j)
                     {
-                        temp.Matrix[i * J + j] = 0;
-                        for (int k = 0; k < temp.J; ++k)
-                            temp.Matrix[i * J + j] += this->Matrix[i * (this->J) + k] * other.Matrix[k * other.J + j];
+                        for (int k = 0; k < this->J; ++k)
+                            temp.Matrix[i * temp.J + j] += this->Matrix[i * (this->J) + k] * other.Matrix[k * other.J + j];
+
+                        temp.Matrix[i * J + j] = temp.Matrix[i * J + j];
+                        std::cout << temp.Matrix[i * J + j] << std::endl;
                     }
             }
             else std::cout << "Error: matrices aren't consistent!" << std::endl;
         }
-
         return temp;
     }
     //-----Standart operations-----
@@ -165,7 +183,7 @@ public:
 
             for (int i = 0; i < I; ++i)
                 for (int j = 0; j < J; ++j)
-                    Matrix[i * J + j] = rand();
+                    Matrix[i * J + j] = rand() % 100 - 50;
         }
     }
 
@@ -207,13 +225,13 @@ int main()// почини деструктор
     matrix test3;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.create();
+    test.random(6,2);
     test.printinfo();
 
-    test2.create();
+    test2.random(2,4);
     test2.printinfo();
 
-    test3 = test * test2;
+    test3 = test2 * test;
     test3.printinfo();
 
     //test plus;
