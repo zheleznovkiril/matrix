@@ -114,6 +114,21 @@ public:
         zero();
     }
     //-----Standart operations-----
+    void transposition()
+    {
+        if (initialization == NULL)
+            std::cout << "Error: Matrix doesn't exist" << std::endl;
+        else
+        {
+            matrix temp;
+            temp.I = this->J; temp.J = this->I; temp.initialization = 1;
+            temp.Matrix = new float[I * J];
+            for (int i = 0; i < I; ++i)
+                for (int j = 0; j < J; ++j)
+                    temp.Matrix[j * (this->I) + i] = this->Matrix[i * J + j];
+            (*this) = temp;
+        }
+    }
     matrix& operator=(const matrix& other)
     {
         deletem();
@@ -276,7 +291,6 @@ public:
 };
 
 
-
 int main()// почини деструктор
 {
     srand(time(0));
@@ -287,14 +301,19 @@ int main()// почини деструктор
     matrix test4;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.random(1, 4);
-    test.printinfo();
-    test2.identity(4);
-    test2.printinfo();
-
-    test *= test2;
+    test.random(2, 4);
     test.printinfo();
    
+    test2.random(4, 2);
+    test2.printinfo();
+
+    test3 = test * test2;
+    test3.transposition();
+    test3.printinfo();
+    test.transposition();
+    test2.transposition();
+    test4 = test2 * test;
+    test4.printinfo();
 
     //test plus;
     std::cout << "Hello World!\n";
