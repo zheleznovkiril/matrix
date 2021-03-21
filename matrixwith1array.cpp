@@ -320,6 +320,15 @@ public:
     //-----Random functions-----
     //-----Constructors and destructor-----
     matrix() {}
+    matrix(const matrix& other)
+    {
+        this->I = other.I; this->J = other.J; this->initialization = other.initialization;
+        this->Matrix = new double[I * J];
+
+        for (int i = 0; i < I; ++i)
+            for (int j = 0; j < J; ++j)
+                this->Matrix[i * J + j] = other.Matrix[i * J + j];
+    }
 
     matrix(double* MatrixForCopy, int I0, int J0)
     {
