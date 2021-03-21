@@ -15,6 +15,14 @@ private:
     int I = 0;
     int J = 0;
     bool initialization = NULL;
+
+    float easy_detA()//использовал числа, потому что функция для подсчета определителся матрицы 2х2 
+    {
+        if (I == 2)
+            return (Matrix[0] * Matrix[3] - Matrix[1] * Matrix[2]);
+        else if (I == 1)
+            return Matrix[0];
+    }
 public:
 
     void create()
@@ -70,6 +78,44 @@ public:
                 std::cout << "|\n" << std::endl;
             }
             std::cout << "Number of lines: " << I << '\n' << "Number of columns: " << J << std::endl;
+        }
+    }
+
+    float detA()
+    {
+        if (initialization == NULL)
+        {
+            std::cout << "Error: Matrix doesn't exist" << std::endl;
+            return 0;
+        }
+        else if (I != J)
+        {
+            std::cout << "Error: detA doesn't exist for not square matrix" << std::endl;
+            return 0;
+        }
+        else if (I <= 2)
+            return easy_detA();
+        else
+        {
+            matrix* arr = new matrix[I];
+            float det = 0;
+            for (int i = 0; i < I; ++i)
+                arr[i].zero((I - 1), (I - 1));
+
+            for (int k = 0; k < I; ++k)//k - элемент массива arr
+                for (int i = 0; i < this->I - 1; ++i)
+                    for (int j = 0, j2 = 0; j < this->I - 1; ++j, ++j2)
+                    {
+                        if (k == j)
+                            ++j2;
+                        arr[k].Matrix[i * (J - 1) + j] = this->Matrix[(i + 1) * (this->J) + j2];
+                    }
+
+            for (int k = 0; k < I; ++k)
+                det += (this->Matrix[k])*(arr[k].detA());
+
+            delete[] arr;
+            return det;
         }
     }
 
@@ -301,19 +347,10 @@ int main()// почини деструктор
     matrix test4;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.random(2, 4);
+    test.random(4,4);
     test.printinfo();
    
-    test2.random(4, 2);
-    test2.printinfo();
-
-    test3 = test * test2;
-    test3.transposition();
-    test3.printinfo();
-    test.transposition();
-    test2.transposition();
-    test4 = test2 * test;
-    test4.printinfo();
+    std::cout << test.detA() << std::endl;
 
     //test plus;
     std::cout << "Hello World!\n";
