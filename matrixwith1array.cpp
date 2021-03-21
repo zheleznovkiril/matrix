@@ -11,12 +11,12 @@
 class matrix
 {
 private:
-    float* Matrix = nullptr;
+    double* Matrix = nullptr;
     int I = 0;
     int J = 0;
     bool initialization = NULL;
 
-    float easy_detA()//использовал числа, потому что функция для подсчета определителся матрицы 2х2 
+    double easy_detA()//использовал числа, потому что функция для подсчета определителся матрицы 2х2 
     {
         if (I == 2)
             return (Matrix[0] * Matrix[3] - Matrix[1] * Matrix[2]);
@@ -40,7 +40,7 @@ public:
             std::cout << "Enter numbers:" << std::endl;
 
             initialization = 1;
-            Matrix = new float[I * J - 1];
+            Matrix = new double[I * J];
             for (int i = 0; i < I; ++i)
                 for (int j = 0; j < J; ++j)
                 {
@@ -81,7 +81,7 @@ public:
         }
     }
 
-    float detA()
+    double detA()
     {
         if (initialization == NULL)
         {
@@ -98,7 +98,7 @@ public:
         else
         {
             matrix* arr = new matrix[I];
-            float det = 0;
+            double det = 0;
             for (int i = 0; i < I; ++i)
                 arr[i].zero((I - 1), (I - 1));
 
@@ -112,7 +112,7 @@ public:
                     }
 
             for (int k = 0; k < I; ++k)
-                det += (this->Matrix[k])*(arr[k].detA());
+                det += (this->Matrix[k]) * (arr[k].detA());
 
             delete[] arr;
             return det;
@@ -138,7 +138,7 @@ public:
         if (initialization != NULL)
             deletem();
         this->I = I; this->J = I; this->initialization = 1;
-        this->Matrix = new float[I * I];
+        this->Matrix = new double[I * I];
         (*this).identity();
     }
 
@@ -156,7 +156,7 @@ public:
         if (initialization != NULL)
             deletem();
         this->I = I0; this->J = J0; this->initialization = 1;
-        this->Matrix = new float[I * J];
+        this->Matrix = new double[I * J];
         zero();
     }
     //-----Standart operations-----
@@ -168,7 +168,7 @@ public:
         {
             matrix temp;
             temp.I = this->J; temp.J = this->I; temp.initialization = 1;
-            temp.Matrix = new float[I * J];
+            temp.Matrix = new double[I * J];
             for (int i = 0; i < I; ++i)
                 for (int j = 0; j < J; ++j)
                     temp.Matrix[j * (this->I) + i] = this->Matrix[i * J + j];
@@ -182,7 +182,7 @@ public:
         this->J = other.J;
         this->initialization = 1;
 
-        this->Matrix = new float[I * J];
+        this->Matrix = new double[I * J];
         for (int i = 0; i < I * J; ++i)
             this->Matrix[i] = other.Matrix[i];
         return *this;
@@ -201,7 +201,7 @@ public:
                 if (this->J == other.J)
                 {
                     plus.I = this->I; plus.J = this->J; plus.initialization = this->initialization;
-                    plus.Matrix = new float[I * J];
+                    plus.Matrix = new double[I * J];
                     for (int i = 0; i < I * J; ++i)
                         plus.Matrix[i] = this->Matrix[i] + other.Matrix[i];
                 }
@@ -277,15 +277,15 @@ public:
     //-----Standart operations-----
     //-----Getters-----
 
-    float* get_matrix()
+    double* get_matrix()
     {
-        float* Copy = new float[I * J - 1];
+        double* Copy = new double[I * J];
         for (int i = 0; i < I; ++i)
             for (int j = 0; j < J; ++j)
                 Copy[i * J + j] = Matrix[i * J + j];
         return Copy;
     }
-    float get_N_elem(int i, int j) { return Matrix[(i - 1) * J + j - 1]; }
+    double get_N_elem(int i, int j) { return Matrix[(i - 1) * J + j - 1]; }
     int get_I() { return I; }
     int get_J() { return J; }
     bool is_exist() { return initialization; }
@@ -301,7 +301,7 @@ public:
         else
         {
             I = I0; J = J0; initialization = 1;
-            Matrix = new float[I * J - 1];
+            Matrix = new double[I * J];
 
             for (int i = 0; i < I; ++i)
                 for (int j = 0; j < J; ++j)
@@ -322,22 +322,22 @@ public:
     //-----Constructors and destructor-----
     matrix() {}
 
-    matrix(float* MatrixForCopy, int I0, int J0)
+    matrix(double* MatrixForCopy, int I0, int J0)
     {
         I = I0; J = J0; initialization = 1;
-        Matrix = new float[I * J - 1];
+        Matrix = new double[I * J];
 
         for (int i = 0; i < I; ++i)
             for (int j = 0; j < J; ++j)
                 Matrix[i * J + j] = MatrixForCopy[i * J + j];
     }
 
-    ~matrix() { }//deletem();
+    ~matrix() { deletem(); }
     //-----Constructors and destructor-----
 };
 
 
-int main()// почини деструктор
+int main()
 {
     srand(time(0));
     std::string a;
@@ -347,10 +347,10 @@ int main()// почини деструктор
     matrix test4;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.random(4,4);
+    test.zero(4, 4);
     test.printinfo();
-   
-    std::cout << test.detA() << std::endl;
+
+    //std::cout << test.detA() << std::endl;
 
     //test plus;
     std::cout << "Hello World!\n";
