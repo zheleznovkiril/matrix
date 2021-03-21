@@ -200,8 +200,7 @@ public:
             if (this->I == other.I)
                 if (this->J == other.J)
                 {
-                    plus.I = this->I; plus.J = this->J; plus.initialization = this->initialization;
-                    plus.Matrix = new double[I * J];
+                    plus.zero(this->I, other.J);
                     for (int i = 0; i < I * J; ++i)
                         plus.Matrix[i] = this->Matrix[i] + other.Matrix[i];
                 }
@@ -337,7 +336,7 @@ public:
 };
 
 
-int main()
+int main()//не правильно передает при сложении
 {
     srand(time(0));
     std::string a;
@@ -347,8 +346,12 @@ int main()
     matrix test4;
     std::cout << test.is_exist() << "\n\n\n\n";
 
-    test.zero(4, 4);
+    test.random(10, 8);
     test.printinfo();
+    test2.identity(8);
+    test2.printinfo();
+    test3 = test * test2;
+    test3.printinfo();
 
     //std::cout << test.detA() << std::endl;
 
