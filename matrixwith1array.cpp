@@ -16,7 +16,7 @@ private:
     int J = 0;
     bool initialization = NULL;
 
-    double easy_detA()//использовал числа, потому что функция для подсчета определителся матрицы 2х2 
+    double easy_detA()//использовал числа, потому что функция для подсчета определителся матрицы 2х2 и 1х1
     {
         if (I == 2)
             return (Matrix[0] * Matrix[3] - Matrix[1] * Matrix[2]);
@@ -51,7 +51,7 @@ public:
         }
     }
 
-    void deletem()//что-то неверно
+    void deletem()
     {
         if (initialization == NULL);
         else
@@ -97,12 +97,29 @@ public:
             return easy_detA();
         else
         {
-            matrix* arr = new matrix[I];
+            matrix* arr = new matrix[I*J];
+            matrix minor;
+            minor.zero(I, I);
             double det = 0;
-            for (int i = 0; i < I; ++i)
+            for (int i = 0; i < I*J; ++i)
                 arr[i].zero((I - 1), (I - 1));
 
-            for (int k = 0; k < I; ++k)//k - элемент массива arr
+            for (int ki = 0; ki < I; ++ki)
+                for (int kj = 0; kj < I; ++kj)
+                    for (int i = 0, i2 = 0; i < I - 1; ++i, ++i2)
+                        for (int j = 0, j2 = 0; j < I - 1; ++j, ++j2)
+                        {
+                            if (i2 == ki)
+                                ++i2;
+                            if (j2 == kj)
+                                ++j2;
+                            arr[ki * J + kj].Matrix[i * (J - 1) + j] = this->Matrix[i2 * (this->J) + j2];
+                        }
+            for (int i = 0; i < I * J; ++i)
+                minor.Matrix[i] = arr[i].detA();
+            minor.printinfo();
+            /*for(int kj=0;kj<I;++kj)
+            for (int k = 0; k < I; ++k)//k - рассматриваемый элемент в строке
                 for (int i = 0; i < this->I - 1; ++i)
                     for (int j = 0, j2 = 0; j < this->I - 1; ++j, ++j2)
                     {
@@ -112,7 +129,10 @@ public:
                     }
 
             for (int k = 0; k < I; ++k)
+            {
                 det += (this->Matrix[k]) * (arr[k].detA());
+                std::cout << k << ". " << (this->Matrix[k]) * (arr[k].detA()) << "|"<<std::endl;
+            }*/
 
             delete[] arr;
             return det;
@@ -345,23 +365,22 @@ public:
 };
 
 
-int main()//не правильно передает при сложении
+int main()
 {
     srand(time(0));
     std::string a;
+   //double Matrix[9]{ 5,7,1,-4,1,0,2,0,3 };
+   
     matrix test;
-    matrix test2;
+    matrix test2;// (Matrix, 3, 3);
     matrix test3;
     matrix test4;
     std::cout << test.is_exist() << "\n\n\n\n";
-
-    test.random(10, 8);
+    
+    test.random(4, 4);
     test.printinfo();
-    test2.identity(8);
-    test2.printinfo();
-    test3 = test * test2;
-    test3.printinfo();
-
+    std::cout << test.detA() << std::endl;
+        
     //std::cout << test.detA() << std::endl;
 
     //test plus;
