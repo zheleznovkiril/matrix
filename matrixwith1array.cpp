@@ -97,26 +97,25 @@ public:
             return easy_detA();
         else
         {
-            matrix* arr = new matrix[I*J];
+            matrix* arr = new matrix[I];
             double det = 0;
-            for (int i = 0; i < I * J; ++i) //инициализация массива для матриц с пониженным рангом
+            for (int i = 0; i < I; ++i) //инициализация массива для матриц с пониженным рангом, количество элементов равно количеству элементов строки
             {
                 arr[i].I = I - 1; arr[i].J = I - 1; arr[i].initialization = 1;
                 arr[i].Matrix = new double[arr[i].I * arr[i].I];
             }
 
-            for (int ki = 0; ki < I; ++ki) //понижение порядка матрицы для каждого элемента и записывается в arr, убирается i строка и j столбец
-                for (int kj = 0; kj < I; ++kj)
-                    for (int i = 0, i2 = 0; i < I - 1; ++i, ++i2)
-                        for (int j = 0, j2 = 0; j < I - 1; ++j, ++j2)
-                        {
-                            if (i2 == ki)
-                                ++i2;
-                            if (j2 == kj)
-                                ++j2;
-                            arr[ki * J + kj].Matrix[i * (J - 1) + j] = this->Matrix[i2 * (this->J) + j2];
-                        }
-           
+             
+            for (int kj = 0; kj < I; ++kj)//понижение порядка матрицы для каждого элемента и записывается в arr, убирается первая (0) строка и j столбец
+            {
+                for (int i = 0, i2 = 1; i < I - 1; ++i, ++i2)
+                    for (int j = 0, j2 = 0; j < I - 1; ++j, ++j2)
+                    {
+                        if (j2 == kj)
+                            ++j2;
+                        arr[kj].Matrix[i * (J - 1) + j] = this->Matrix[i2 * (this->J) + j2];
+                    }
+            }
             for (int i = 0; i < I; ++i) //сложение всех миноров 1-ой строки, умноженных на (-1)^i и i элемент и их суммирование
                 {
                     if (this->Matrix[i] == 0);
@@ -369,13 +368,12 @@ int main()
     //matrix test4;
     //std::cout << test.is_exist() << "\n\n\n\n";
     
-    test.random(10, 10);
-    test2.printinfo();
-    std::cout << test2.detA() << std::endl;
+    test.random(190, 190);
+    std::cout <<std::fixed<< test.detA() << std::endl;
     
-    test2.transposition();
-    test2.printinfo();
-    std::cout<< test2.detA() << std::endl;
+   // test2.transposition();
+   // test2.printinfo();
+   // std::cout<< test2.detA() << std::endl;
         
     //std::cout << test.detA() << std::endl;
 
