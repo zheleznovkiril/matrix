@@ -98,13 +98,14 @@ public:
         else
         {
             matrix* arr = new matrix[I*J];
-            matrix minor;
-            minor.zero(I, I);
             double det = 0;
-            for (int i = 0; i < I*J; ++i)
-                arr[i].zero((I - 1), (I - 1));
+            for (int i = 0; i < I * J; ++i) //инициализация массива для матриц с пониженным рангом
+            {
+                arr[i].I = I - 1; arr[i].J = I - 1; arr[i].initialization = 1;
+                arr[i].Matrix = new double[arr[i].I * arr[i].I];
+            }
 
-            for (int ki = 0; ki < I; ++ki)
+            for (int ki = 0; ki < I; ++ki) //понижение порядка матрицы для каждого элемента и записывается в arr, убирается i строка и j столбец
                 for (int kj = 0; kj < I; ++kj)
                     for (int i = 0, i2 = 0; i < I - 1; ++i, ++i2)
                         for (int j = 0, j2 = 0; j < I - 1; ++j, ++j2)
@@ -115,24 +116,15 @@ public:
                                 ++j2;
                             arr[ki * J + kj].Matrix[i * (J - 1) + j] = this->Matrix[i2 * (this->J) + j2];
                         }
-            for (int i = 0; i < I * J; ++i)
-                minor.Matrix[i] = arr[i].detA();
-            minor.printinfo();
-            /*for(int kj=0;kj<I;++kj)
-            for (int k = 0; k < I; ++k)//k - рассматриваемый элемент в строке
-                for (int i = 0; i < this->I - 1; ++i)
-                    for (int j = 0, j2 = 0; j < this->I - 1; ++j, ++j2)
-                    {
-                        if (k == j)
-                            ++j2;
-                        arr[k].Matrix[i * (J - 1) + j] = this->Matrix[(i + 1) * (this->J) + j2];
-                    }
-
-            for (int k = 0; k < I; ++k)
-            {
-                det += (this->Matrix[k]) * (arr[k].detA());
-                std::cout << k << ". " << (this->Matrix[k]) * (arr[k].detA()) << "|"<<std::endl;
-            }*/
+           
+            for (int i = 0; i < I; ++i) //сложение всех миноров 1-ой строки, умноженных на (-1)^i и i элемент и их суммирование
+                {
+                    if (this->Matrix[i] == 0);
+                    else if(i%2==0)
+                        det += (this->Matrix[i]) * arr[i].detA();
+                    else 
+                        det -= (this->Matrix[i]) * arr[i].detA();
+                }
 
             delete[] arr;
             return det;
@@ -369,17 +361,21 @@ int main()
 {
     srand(time(0));
     std::string a;
-   //double Matrix[9]{ 5,7,1,-4,1,0,2,0,3 };
+   double Matrix[9]{ 5,7,1,-4,1,0,2,0,3 }; //detA = 97
    
     matrix test;
-    matrix test2;// (Matrix, 3, 3);
-    matrix test3;
-    matrix test4;
-    std::cout << test.is_exist() << "\n\n\n\n";
+    matrix test2(Matrix, 3, 3);
+    //matrix test3;
+    //matrix test4;
+    //std::cout << test.is_exist() << "\n\n\n\n";
     
-    test.random(4, 4);
-    test.printinfo();
-    std::cout << test.detA() << std::endl;
+    test.random(10, 10);
+    test2.printinfo();
+    std::cout << test2.detA() << std::endl;
+    
+    test2.transposition();
+    test2.printinfo();
+    std::cout<< test2.detA() << std::endl;
         
     //std::cout << test.detA() << std::endl;
 
