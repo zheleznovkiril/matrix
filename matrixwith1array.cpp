@@ -105,7 +105,7 @@ public:
                 arr[i].Matrix = new double[arr[i].I * arr[i].I];
             }
 
-             
+
             for (int kj = 0; kj < I; ++kj)//понижение порядка матрицы для каждого элемента и записывается в arr, убирается первая (0) строка и j столбец
             {
                 for (int i = 0, i2 = 1; i < I - 1; ++i, ++i2)
@@ -117,13 +117,13 @@ public:
                     }
             }
             for (int i = 0; i < I; ++i) //сложение всех миноров 1-ой строки, умноженных на (-1)^i и i элемент и их суммирование
-                {
-                    if (this->Matrix[i] == 0);
-                    else if(i%2==0)
-                        det += (this->Matrix[i]) * arr[i].detA();
-                    else 
-                        det -= (this->Matrix[i]) * arr[i].detA();
-                }
+            {
+                if (this->Matrix[i] == 0);
+                else if (i % 2 == 0)
+                    det += (this->Matrix[i]) * arr[i].detA();
+                else
+                    det -= (this->Matrix[i]) * arr[i].detA();
+            }
 
             delete[] arr;
             return det;
@@ -170,8 +170,26 @@ public:
         this->Matrix = new double[I * J];
         zero();
     }
-    //-----Standart operations-----
-    void transposition()
+    //-----Elementary operations-----
+    template <typename T>
+    matrix& multiply(T x)
+    {
+        if (initialization == NULL)
+            std::cout << "Error: Matrix doesn't exist" << std::endl;
+        else
+            for (int i = 0; i < this->I * this->J; ++i)
+                this->Matrix[i] *= x;
+        return *this;
+    }
+
+    template <typename T>
+    matrix operator*(T x)
+    {
+        matrix temp = *this;
+        return temp.multiply(x);
+    }
+
+    matrix& transposition()
     {
         if (initialization == NULL)
             std::cout << "Error: Matrix doesn't exist" << std::endl;
@@ -185,6 +203,7 @@ public:
                     temp.Matrix[j * (this->I) + i] = this->Matrix[i * J + j];
             (*this) = temp;
         }
+        return *this;
     }
     matrix& operator=(const matrix& other)
     {
@@ -192,33 +211,66 @@ public:
         this->I = other.I;
         this->J = other.J;
         this->initialization = 1;
-
         this->Matrix = new double[I * J];
         for (int i = 0; i < I * J; ++i)
             this->Matrix[i] = other.Matrix[i];
         return *this;
     }
 
-    matrix operator+(const matrix& other)
+    matrix operator-(const matrix& other)
     {
-        matrix plus;
+        matrix temp;
         if (this->initialization == 1 && other.initialization == 0)
-            plus = *this;
+        {
+            std::cout << "Error: one of matrix doesn't exist" << std::endl;
+            temp = *this;
+        }
         else if (this->initialization == 0 && other.initialization == 1)
-            plus = other;
+        {
+            std::cout << "Error: one of matrix doesn't exist" << std::endl;
+            temp = other;
+        }
         else if (this->initialization == 1 && other.initialization == 1)
         {
             if (this->I == other.I)
                 if (this->J == other.J)
                 {
-                    plus.zero(this->I, other.J);
+                    temp.zero(this->I, other.J);
                     for (int i = 0; i < I * J; ++i)
-                        plus.Matrix[i] = this->Matrix[i] + other.Matrix[i];
+                        temp.Matrix[i] = this->Matrix[i] - other.Matrix[i];
                 }
                 else std::cout << "Error: different values of columns!" << std::endl;
             else std::cout << "Error: different values of lines!" << std::endl;
         }
-        return plus;
+        return temp;
+    }
+
+    matrix operator+(const matrix& other)
+    {
+        matrix temp;
+        if (this->initialization == 1 && other.initialization == 0)
+        {
+            std::cout << "Error: one of matrix doesn't exist" << std::endl;
+            temp = *this;
+        }
+        else if (this->initialization == 0 && other.initialization == 1)
+        {
+            std::cout << "Error: one of matrix doesn't exist" << std::endl;
+            temp = other;
+        }
+        else if (this->initialization == 1 && other.initialization == 1)
+        {
+            if (this->I == other.I)
+                if (this->J == other.J)
+                {
+                    temp.zero(this->I, other.J);
+                    for (int i = 0; i < I * J; ++i)
+                        temp.Matrix[i] = this->Matrix[i] + other.Matrix[i];
+                }
+                else std::cout << "Error: different values of columns!" << std::endl;
+            else std::cout << "Error: different values of lines!" << std::endl;
+        }
+        return temp;
     }
 
     matrix operator*(matrix& other)
@@ -226,7 +278,7 @@ public:
         matrix temp;
 
         if (other.initialization == 0 || this->initialization == 0)
-            std::cout << "Error: one of matrix doesn't exist";
+            std::cout << "Error: one of matrix doesn't exist" << std::endl;
         else if (this->initialization == 1 && other.initialization == 1)
         {
             if (this->J == other.I)
@@ -244,19 +296,20 @@ public:
 
     matrix& operator*=(matrix& other)
     {
-        if (other.initialization == 0 || this->initialization == 0)
-        {
-            std::cout << "Error: one of matrix doesn't exist";
-            return *this;
-        }
-        else
-        {
-            if (this->J == other.I)
-                (*this) = (*this) * other;
-            else
-                std::cout << "Error: matrices aren't consistent!" << std::endl;
-            return *this;
-        }
+        (*this) = (*this) * other;
+        return *this;
+    }
+
+    matrix& operator+=(matrix& other)
+    {
+        (*this) = (*this) + other;
+        return *this;
+    }
+
+    matrix& operator-=(matrix& other)
+    {
+        (*this) = (*this) - other;
+        return *this;
     }
 
     /*void power(int pow) исправь потом
@@ -360,24 +413,26 @@ int main()
 {
     srand(time(0));
     std::string a;
-   double Matrix[9]{ 5,7,1,-4,1,0,2,0,3 }; //detA = 97
-   
+    double Matrix[9]{ 5,7,1,-4,1,0,2,0,3 }; //detA = 97
+
     matrix test;
     matrix test2(Matrix, 3, 3);
-    //matrix test3;
+    matrix test3;
     //matrix test4;
     //std::cout << test.is_exist() << "\n\n\n\n";
-    
-    test.random(190, 190);
-    std::cout <<std::fixed<< test.detA() << std::endl;
-    
-   // test2.transposition();
-   // test2.printinfo();
-   // std::cout<< test2.detA() << std::endl;
-        
-    //std::cout << test.detA() << std::endl;
 
-    //test plus;
+    //test.random(50, 50);
+    //std::cout << std::fixed << test2.detA() << std::endl;
+    test.zero(4, 4);
+    test = test2*2;
+    test.printinfo();
+    // test2.transposition();
+    // test2.printinfo();
+    // std::cout<< test2.detA() << std::endl;
+
+     //std::cout << test.detA() << std::endl;
+
+     //test plus;
     std::cout << "Hello World!\n";
     return 0;
 }
